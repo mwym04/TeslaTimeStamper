@@ -1,0 +1,17 @@
+//
+//  TeslaTimeStamperApp.swift
+//  TeslaTimeStamper
+//
+//  Created by LeeMinwoo on 4/1/24.
+//
+
+import SwiftUI
+
+@main
+struct TeslaTimeStamperApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
