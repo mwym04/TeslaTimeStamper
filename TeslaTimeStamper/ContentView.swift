@@ -16,41 +16,66 @@ struct ContentView: View {
     @State private var creationDate: Date?
     @State private var player: AVPlayer?
     @State private var playerItem: AVPlayerItem?
+    @State private var animation = false
+    @State private var showAlert = false
     
+    @Environment(\.verticalSizeClass) var horizontalSizeClass
+
     @StateObject private var videoExporter: VideoExporter = VideoExporter()
     
     var body: some View {
         NavigationStack {
-            Button {
-                isFileImporterPresented = true
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("선택")
-                        .padding()
-                        .foregroundStyle(videoExporter.isExporting ? Color.gray : Color.blue)
-                }
-            }
-            .disabled(videoExporter.isExporting)
+            
             Spacer()
             ZStack{
                 VStack {
                     if let player = player {
                         VideoPlayer(player: player)
-                            .onDisappear {
-                                self.player = nil
-                                self.playerItem = nil
+                        if horizontalSizeClass == .regular {
+                            if let date = creationDate {
+                                Text("촬영일시: \(formattedDate(date))")
+                            } else {
+                                Text("N/A")
                             }
-                        if let date = creationDate {
-                            Text("촬영일시: \(formattedDate(date))")
                         } else {
-                            Text("N/A")
+                            
                         }
                     } else {
                         Text("비디오를 선택하세요.")
                             .padding()
                     }
                 }
+                if videoExporter.isCompleted {
+                    VStack{
+                        if #available(iOS 17.0, *) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundStyle(Color.green)
+                                .symbolEffect(.bounce.up.byLayer, value: animation)
+                                .onAppear(perform: {
+                                    animation = true
+                                })
+                                .onDisappear {
+                                    animation = false
+                                }
+                        } else {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundStyle(Color.green)
+                                .onAppear(perform: {
+                                    animation = true
+                                })
+                                .onDisappear {
+                                    animation = false
+                                }
+                        }
+                    }
+                }
+                
                 if videoExporter.isExporting {
                     VStack {
                         ProgressView(value: videoExporter.progress, total: 1.0)
@@ -66,11 +91,16 @@ struct ContentView: View {
             Spacer()
             Button {
                 Task {
-                    let exportURL = try await videoExporter.export(url: selectedVideoURL!, creationDate: creationDate!)
-                    await videoExporter.saveToLibrary(url: exportURL!)
+                    if let exportURL = try await videoExporter.export(url: selectedVideoURL!, creationDate: creationDate!) {
+                        await videoExporter.saveToLibrary(url: exportURL)
+                    } else {
+                        DispatchQueue.main.async {
+                            self.showAlert = true
+                        }
+                    }
                 }
             } label: {
-                if selectedVideoURL != nil {
+                if selectedVideoURL != nil, horizontalSizeClass == .regular {
                         Text("타임스탬프")
                             .font(.title3)
                             .bold()
@@ -80,23 +110,40 @@ struct ContentView: View {
                             .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
                             .padding()
                 }
-                
             }
             .disabled(videoExporter.isExporting)
-                      
+        
+            .alert(Text("주의"), isPresented: $showAlert) {
+                Button("확인", role: .cancel) { }
+            } message: {
+                Text("인코딩 중 백그라운드로 넘어가면 작업이 취소됩니다.")
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isFileImporterPresented = true
+                    }, label: {
+                        Text("선택")
+                            .foregroundStyle(videoExporter.isExporting ? Color.gray : Color.blue)
+                    })
+                    .disabled(videoExporter.isExporting)
+                }
+            }
+            
             .fileImporter(isPresented: $isFileImporterPresented, allowedContentTypes: [.movie], allowsMultipleSelection: false) { result in
                 switch result {
                 case .success(let urls):
                     if let url = urls.first {
                         handleNewVideoURL(url)
+                        videoExporter.isCompleted = false
                     }
-                    
                 case .failure(let error):
                     print("Failed to select video: \(error.localizedDescription)")
                 }
             }
         }
     }
+    
     private func handleNewVideoURL(_ url: URL) {
         let gotAccess = url.startAccessingSecurityScopedResource()
         if !gotAccess {
@@ -126,10 +173,9 @@ struct ContentView: View {
     
     private func loadCreationDate(from url: URL) async {
         let asset = AVAsset(url: url)
-        print(url)
         do {
             let duration = try await asset.load(.duration)
-            let seconds = CMTimeGetSeconds(duration)
+            let seconds = CMTimeGetSeconds(duration) + 1
             
             let resourceValues = try url.resourceValues(forKeys: [.creationDateKey])
             
