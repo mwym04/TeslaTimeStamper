@@ -172,15 +172,17 @@ struct ContentView: View {
     }
     
     private func loadCreationDate(from url: URL) async {
-        let asset = AVAsset(url: url)
+//        let asset = AVAsset(url: url)
         do {
-            let duration = try await asset.load(.duration)
-            let seconds = CMTimeGetSeconds(duration) + 1
+//            let duration = try await asset.load(.duration)
+//            let seconds = CMTimeGetSeconds(duration) + 1
             
             let resourceValues = try url.resourceValues(forKeys: [.creationDateKey])
             
+            self.creationDate = resourceValues.creationDate
+            
             if let creationDate = resourceValues.creationDate {
-                if let newDate = Calendar.current.date(byAdding: .second, value: -Int(seconds), to: creationDate) {
+                if let newDate = Calendar.current.date(byAdding: .second, value: -1, to: creationDate) {
                     self.creationDate = newDate
                 }
             } else {
