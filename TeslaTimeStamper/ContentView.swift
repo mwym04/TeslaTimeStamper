@@ -91,6 +91,7 @@ struct ContentView: View {
             Spacer()
             Button {
                 Task {
+                    let taskId = UIApplication.shared.beginBackgroundTask()
                     if let exportURL = try await videoExporter.export(url: selectedVideoURL!, creationDate: creationDate!) {
                         await videoExporter.saveToLibrary(url: exportURL)
                     } else {
@@ -98,6 +99,7 @@ struct ContentView: View {
                             self.showAlert = true
                         }
                     }
+                    UIApplication.shared.endBackgroundTask(taskId)
                 }
             } label: {
                 if selectedVideoURL != nil, horizontalSizeClass == .regular {
@@ -169,6 +171,12 @@ struct ContentView: View {
                 self.playerItem = playerItem
             }
         }
+    }
+    
+    private func startBackgroundTask(task: @escaping () async -> Void) async {
+        let taskId = UIApplication.shared.beginBackgroundTask()
+        await task()
+        UIApplication.shared.endBackgroundTask(taskId)
     }
     
     private func loadCreationDate(from url: URL) async {
