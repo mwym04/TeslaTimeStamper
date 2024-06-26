@@ -2,6 +2,7 @@ import AVFoundation
 import UIKit
 import Photos
 import CoreImage.CIFilterBuiltins
+import UserNotifications
 
 class VideoExporter: ObservableObject {
     
@@ -11,10 +12,11 @@ class VideoExporter: ObservableObject {
     private var timer: Timer = Timer()
     
     func export(url: URL,
-                withPreset preset: String = AVAssetExportPresetHEVCHighestQualityWithAlpha,
+                withPreset preset: String = AVAssetExportPresetHEVCHighestQuality,
                 toFileType outputFileType: AVFileType = .mp4, creationDate startDate: Date) async throws -> URL? {
         
         DispatchQueue.main.async {
+            
             self.isCompleted = false
             self.isExporting = true
             self.progress = 0.0
@@ -31,7 +33,6 @@ class VideoExporter: ObservableObject {
         //비디오 처리
         
         let titleComposition = AVMutableVideoComposition(asset: video) { request in
-            
             let seconds = Int(CMTimeGetSeconds(request.compositionTime))
             let updatedDate = startDate.addingTimeInterval(TimeInterval(seconds))
             let dateString = dateFormatter.string(from: updatedDate)
@@ -67,9 +68,11 @@ class VideoExporter: ObservableObject {
             // Compose text over the black box and then over the video image
             let combinedImage = positionedText.composited(over: positionedBox)
             let finalImage = combinedImage.composited(over: request.sourceImage)
+            print(waterfallText)
             
             request.finish(with: finalImage, context: nil)
         }
+        print("삽입완료")
 
         //*** 비디오 Export ***//
         let uniqueFileName = url.deletingPathExtension().lastPathComponent
@@ -120,10 +123,15 @@ class VideoExporter: ObservableObject {
                 print("생성날짜, 수정날짜를 변경하는데 실패했습니다.")
             }
             print("export completed")
+            scheduleNotification()
             resetExportingState(isCompleted: true)
             return outURL
         case .failed:
             print("export failed")
+            if let error = exportSession.error {
+                print(error.localizedDescription)
+                print(error)
+            }
             resetExportingState(isCompleted: false)
             return nil
         case .cancelled:
@@ -134,6 +142,57 @@ class VideoExporter: ObservableObject {
             print("unknown error")
             resetExportingState(isCompleted: false)
             return nil
+        }
+    }
+    
+    func mergedVideo(url: URL,
+    withPreset preset: String = AVAssetExportPresetHEVCHighestQualityWithAlpha,
+    toFileType outputFileType: AVFileType = .mp4, creationDate startDate: Date) async throws -> URL? {
+        
+//        let refName: URL? = url.deletingPathExtension()
+//        
+//        var frontVideoURL: URL?
+//        var leftVideoName: URL?
+//        var rightVideoName: URL?
+//        var backVideoName: URL?
+        
+        DispatchQueue.main.async {
+            self.isCompleted = false
+            self.isExporting = true
+            self.progress = 0.0
+        }
+        
+        self.clearTemporaryDirectory()
+        
+        //날짜 처리
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+
+//        let topvideo = AVURLAsset(url: url)
+        
+        
+        
+        
+        
+        return nil
+    }
+    
+    func scheduleNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "타임스탬프 완료"
+        content.body = "앨범에 저장되었습니다."
+        content.sound = UNNotificationSound.default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            }
         }
     }
     

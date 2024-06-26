@@ -6,13 +6,18 @@
 //
 
 import SwiftUI
+import Combine
 
-struct activeVideo: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+class ActiveVideo: ObservableObject {
+    
+    @Published var activeVideo: String?
+    @Published var frontVideoURL: URL?
+    @Published var backVideoURL: URL?
+    @Published var leftVideoURL: URL?
+    @Published var rightVideoURL: URL?
+    
+    func getActiveVideo(url: URL) {
+        activeVideo = "front"
     }
-}
-
-#Preview {
-    activeVideo()
+    
 }

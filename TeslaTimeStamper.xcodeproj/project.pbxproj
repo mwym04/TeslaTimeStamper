@@ -13,6 +13,9 @@
 		CE1FB5B82BFDC542000D8C1F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1FB5B72BFDC542000D8C1F /* ContentView.swift */; };
 		CE8A34302C006C270027062E /* addTextToVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8A342F2C006C270027062E /* addTextToVideo.swift */; };
 		CE8A34322C006D560027062E /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8A34312C006D560027062E /* CustomButton.swift */; };
+		CEF0579B2C229BEE004EA4A1 /* ToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0579A2C229BEE004EA4A1 /* ToggleStyle.swift */; };
+		CEF0579F2C2BDF2B004EA4A1 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0579E2C2BDF2B004EA4A1 /* ButtonView.swift */; };
+		CEF057A12C2BE468004EA4A1 /* activeVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF057A02C2BE468004EA4A1 /* activeVideo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +28,9 @@
 		CE8A342F2C006C270027062E /* addTextToVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addTextToVideo.swift; sourceTree = "<group>"; };
 		CE8A34312C006D560027062E /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		CEE46F362C07027C009B10F2 /* TeslaTimeStamper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeslaTimeStamper.entitlements; sourceTree = "<group>"; };
+		CEF0579A2C229BEE004EA4A1 /* ToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleStyle.swift; sourceTree = "<group>"; };
+		CEF0579E2C2BDF2B004EA4A1 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
+		CEF057A02C2BE468004EA4A1 /* activeVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = activeVideo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +67,9 @@
 				CE1FB5B92BFED3E4000D8C1F /* Info.plist */,
 				CE0897D52BBA417C000FE97B /* TeslaTimeStamperApp.swift */,
 				CE1FB5B72BFDC542000D8C1F /* ContentView.swift */,
+				CEF057A02C2BE468004EA4A1 /* activeVideo.swift */,
+				CEF0579E2C2BDF2B004EA4A1 /* ButtonView.swift */,
+				CEF0579A2C229BEE004EA4A1 /* ToggleStyle.swift */,
 				CE8A34312C006D560027062E /* CustomButton.swift */,
 				CE8A342F2C006C270027062E /* addTextToVideo.swift */,
 				CE0897D92BBA417D000FE97B /* Assets.xcassets */,
@@ -148,6 +157,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE8A34322C006D560027062E /* CustomButton.swift in Sources */,
+				CEF0579B2C229BEE004EA4A1 /* ToggleStyle.swift in Sources */,
+				CEF057A12C2BE468004EA4A1 /* activeVideo.swift in Sources */,
+				CEF0579F2C2BDF2B004EA4A1 /* ButtonView.swift in Sources */,
 				CE1FB5B82BFDC542000D8C1F /* ContentView.swift in Sources */,
 				CE8A34302C006C270027062E /* addTextToVideo.swift in Sources */,
 				CE0897D62BBA417C000FE97B /* TeslaTimeStamperApp.swift in Sources */,
@@ -285,14 +297,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TeslaTimeStamper/TeslaTimeStamper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"TeslaTimeStamper/Preview Content\"";
 				DEVELOPMENT_TEAM = 2L99SBH8W7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TeslaTimeStamper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TeslaTime;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진 라이브러리에 접근 권한을 요청합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -305,7 +317,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = MW.TeslaTime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -325,14 +337,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TeslaTimeStamper/TeslaTimeStamper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"TeslaTimeStamper/Preview Content\"";
 				DEVELOPMENT_TEAM = 2L99SBH8W7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TeslaTimeStamper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TeslaTime;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진 라이브러리에 접근 권한을 요청합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -345,7 +357,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = MW.TeslaTime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -8,6 +8,7 @@
 import SwiftUI
 import AVFoundation
 import AVKit
+import UserNotifications
 
 struct ContentView: View {
     @State private var isFileImporterPresented = false
@@ -17,20 +18,24 @@ struct ContentView: View {
     @State private var player: AVPlayer?
     @State private var playerItem: AVPlayerItem?
     @State private var animation = false
-    @State private var showAlert = false
+    @State private var isMerged = false
     
     @Environment(\.verticalSizeClass) var horizontalSizeClass
 
     @StateObject private var videoExporter: VideoExporter = VideoExporter()
+    @StateObject private var activeVideo: ActiveVideo = ActiveVideo()
     
     var body: some View {
         NavigationStack {
-            
             Spacer()
             ZStack{
                 VStack {
                     if let player = player {
+                        ButtonView(activeVideo: activeVideo)
                         VideoPlayer(player: player)
+                            .onAppear(perform: {
+                                activeVideo.getActiveVideo(url: selectedVideoURL!)
+                            })
                         if horizontalSizeClass == .regular {
                             if let date = creationDate {
                                 Text("촬영일시: \(formattedDate(date))")
@@ -60,6 +65,9 @@ struct ContentView: View {
                                 .onDisappear {
                                     animation = false
                                 }
+                            Text("앨범에 저장되었습니다.")
+                                .font(.caption)
+                                .padding(5)
                         } else {
                             Image(systemName: "checkmark.circle.fill")
                                 .resizable()
@@ -90,16 +98,20 @@ struct ContentView: View {
             }
             Spacer()
             Button {
-                Task {
-                    let taskId = UIApplication.shared.beginBackgroundTask()
-                    if let exportURL = try await videoExporter.export(url: selectedVideoURL!, creationDate: creationDate!) {
-                        await videoExporter.saveToLibrary(url: exportURL)
-                    } else {
-                        DispatchQueue.main.async {
-                            self.showAlert = true
-                        }
+                
+                if isMerged == true {
+                    Task {
+                        
                     }
-                    UIApplication.shared.endBackgroundTask(taskId)
+                    
+                } else {
+                    Task {
+                        let taskId = UIApplication.shared.beginBackgroundTask()
+                        if let exportURL = try await videoExporter.export(url: selectedVideoURL!, creationDate: creationDate!) {
+                            await videoExporter.saveToLibrary(url: exportURL)
+                        }
+                        UIApplication.shared.endBackgroundTask(taskId)
+                    }
                 }
             } label: {
                 if selectedVideoURL != nil, horizontalSizeClass == .regular {
@@ -114,12 +126,9 @@ struct ContentView: View {
                 }
             }
             .disabled(videoExporter.isExporting)
-        
-            .alert(Text("주의"), isPresented: $showAlert) {
-                Button("확인", role: .cancel) { }
-            } message: {
-                Text("인코딩 중 백그라운드로 넘어가면 작업이 취소됩니다.")
-            }
+            .onAppear(perform: {
+                requestNotificationPermission()
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
@@ -129,6 +138,12 @@ struct ContentView: View {
                             .foregroundStyle(videoExporter.isExporting ? Color.gray : Color.blue)
                     })
                     .disabled(videoExporter.isExporting)
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    HStack {
+                        Toggle("4방향 비디오", isOn: $isMerged).toggleStyle(.switch)
+                            .hidden()
+                    }
                 }
             }
             
@@ -143,6 +158,12 @@ struct ContentView: View {
                     print("Failed to select video: \(error.localizedDescription)")
                 }
             }
+        }
+    }
+    
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
+            
         }
     }
     
@@ -173,24 +194,19 @@ struct ContentView: View {
         }
     }
     
-    private func startBackgroundTask(task: @escaping () async -> Void) async {
-        let taskId = UIApplication.shared.beginBackgroundTask()
-        await task()
-        UIApplication.shared.endBackgroundTask(taskId)
-    }
     
     private func loadCreationDate(from url: URL) async {
-//        let asset = AVAsset(url: url)
+        let asset = AVAsset(url: url)
         do {
-//            let duration = try await asset.load(.duration)
-//            let seconds = CMTimeGetSeconds(duration) + 1
+            let duration = try await asset.load(.duration)
+            let seconds = CMTimeGetSeconds(duration) + 1
             
             let resourceValues = try url.resourceValues(forKeys: [.creationDateKey])
             
             self.creationDate = resourceValues.creationDate
             
             if let creationDate = resourceValues.creationDate {
-                if let newDate = Calendar.current.date(byAdding: .second, value: -1, to: creationDate) {
+                if let newDate = Calendar.current.date(byAdding: .second, value: -Int(seconds), to: creationDate) {
                     self.creationDate = newDate
                 }
             } else {
@@ -214,4 +230,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(\.colorScheme, .dark)
 }

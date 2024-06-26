@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import BackgroundTasks
-
 
 @main
 struct TeslaTimeStamperApp: App {
@@ -16,6 +14,7 @@ struct TeslaTimeStamperApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.colorScheme, .dark)
         }
     }
 }
