@@ -14,8 +14,6 @@
 		CE8A34302C006C270027062E /* addTextToVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8A342F2C006C270027062E /* addTextToVideo.swift */; };
 		CE8A34322C006D560027062E /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8A34312C006D560027062E /* CustomButton.swift */; };
 		CEF0579B2C229BEE004EA4A1 /* ToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0579A2C229BEE004EA4A1 /* ToggleStyle.swift */; };
-		CEF0579F2C2BDF2B004EA4A1 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0579E2C2BDF2B004EA4A1 /* ButtonView.swift */; };
-		CEF057A12C2BE468004EA4A1 /* activeVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF057A02C2BE468004EA4A1 /* activeVideo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,8 +27,6 @@
 		CE8A34312C006D560027062E /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		CEE46F362C07027C009B10F2 /* TeslaTimeStamper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeslaTimeStamper.entitlements; sourceTree = "<group>"; };
 		CEF0579A2C229BEE004EA4A1 /* ToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleStyle.swift; sourceTree = "<group>"; };
-		CEF0579E2C2BDF2B004EA4A1 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
-		CEF057A02C2BE468004EA4A1 /* activeVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = activeVideo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +63,6 @@
 				CE1FB5B92BFED3E4000D8C1F /* Info.plist */,
 				CE0897D52BBA417C000FE97B /* TeslaTimeStamperApp.swift */,
 				CE1FB5B72BFDC542000D8C1F /* ContentView.swift */,
-				CEF057A02C2BE468004EA4A1 /* activeVideo.swift */,
-				CEF0579E2C2BDF2B004EA4A1 /* ButtonView.swift */,
 				CEF0579A2C229BEE004EA4A1 /* ToggleStyle.swift */,
 				CE8A34312C006D560027062E /* CustomButton.swift */,
 				CE8A342F2C006C270027062E /* addTextToVideo.swift */,
@@ -158,8 +152,6 @@
 			files = (
 				CE8A34322C006D560027062E /* CustomButton.swift in Sources */,
 				CEF0579B2C229BEE004EA4A1 /* ToggleStyle.swift in Sources */,
-				CEF057A12C2BE468004EA4A1 /* activeVideo.swift in Sources */,
-				CEF0579F2C2BDF2B004EA4A1 /* ButtonView.swift in Sources */,
 				CE1FB5B82BFDC542000D8C1F /* ContentView.swift in Sources */,
 				CE8A34302C006C270027062E /* addTextToVideo.swift in Sources */,
 				CE0897D62BBA417C000FE97B /* TeslaTimeStamperApp.swift in Sources */,

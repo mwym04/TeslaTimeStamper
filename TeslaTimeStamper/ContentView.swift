@@ -23,7 +23,6 @@ struct ContentView: View {
     @Environment(\.verticalSizeClass) var horizontalSizeClass
 
     @StateObject private var videoExporter: VideoExporter = VideoExporter()
-    @StateObject private var activeVideo: ActiveVideo = ActiveVideo()
     
     var body: some View {
         NavigationStack {
@@ -31,11 +30,7 @@ struct ContentView: View {
             ZStack{
                 VStack {
                     if let player = player {
-                        ButtonView(activeVideo: activeVideo)
                         VideoPlayer(player: player)
-                            .onAppear(perform: {
-                                activeVideo.getActiveVideo(url: selectedVideoURL!)
-                            })
                         if horizontalSizeClass == .regular {
                             if let date = creationDate {
                                 Text("촬영일시: \(formattedDate(date))")

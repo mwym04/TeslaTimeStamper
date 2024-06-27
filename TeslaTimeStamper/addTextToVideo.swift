@@ -149,13 +149,6 @@ class VideoExporter: ObservableObject {
     withPreset preset: String = AVAssetExportPresetHEVCHighestQualityWithAlpha,
     toFileType outputFileType: AVFileType = .mp4, creationDate startDate: Date) async throws -> URL? {
         
-//        let refName: URL? = url.deletingPathExtension()
-//        
-//        var frontVideoURL: URL?
-//        var leftVideoName: URL?
-//        var rightVideoName: URL?
-//        var backVideoName: URL?
-        
         DispatchQueue.main.async {
             self.isCompleted = false
             self.isExporting = true
@@ -168,13 +161,6 @@ class VideoExporter: ObservableObject {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        
-
-//        let topvideo = AVURLAsset(url: url)
-        
-        
-        
-        
         
         return nil
     }
@@ -248,4 +234,3 @@ class VideoExporter: ObservableObject {
         }
     }
 }
-
