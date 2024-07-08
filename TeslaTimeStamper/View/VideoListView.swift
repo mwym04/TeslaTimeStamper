@@ -11,7 +11,10 @@ import SwiftData
 struct VideoListView: View {
     
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.editMode) private var editMode
+    
     @Query(sort: \Video.date, order: .forward) private var videos: [Video]
+    @State private var multiSelection = Set<Video>()
     
     @State var isFileImporterPresented = false
     @State private var showAlert = false
@@ -19,54 +22,55 @@ struct VideoListView: View {
     @State private var progress: Float = 0
     @State private var totalFiles: Int = 0
     @State private var processedFiles: Int = 0
+    @State private var isEditing = false
     
     var body: some View {
         NavigationStack{
             VStack {
-                List {
-                    ForEach(videos) { video in
-                        if !isProcessing {
-                            NavigationLink {
-                                VideoView(video: video)
-                            } label: {
-                                VStack(alignment: .leading, content: {
-                                    Text(video.convertDateFormat(video.date))
-                                    HStack(alignment: .bottom, content: {
-                                        Spacer()
-                                        Text("전")
-                                            .foregroundStyle(video.frontVideo != nil ? .blue : .white)
-                                        Text("후")
-                                            .foregroundStyle(video.backVideo != nil ? .blue : .white)
-                                        Text("좌")
-                                            .foregroundStyle(video.leftVideo != nil ? .blue : .white)
-                                        Text("우")
-                                            .foregroundStyle(video.rightVideo != nil ? .blue : .white)
-                                    })
+                List(videos, id: \.self, selection: $multiSelection) { video in
+                    if !isProcessing {
+                        NavigationLink {
+                            VideoView(video: video)
+                                .onDisappear {
+                                    multiSelection.remove(video)
+                                }
+                        } label: {
+                            VStack(alignment: .leading, content: {
+                                Text(video.convertDateFormat(video.date))
+                                HStack(alignment: .bottom, content: {
+                                    Spacer()
+                                    Text("전")
+                                        .foregroundStyle(video.frontVideo != nil ? .blue : .white)
+                                    Text("후")
+                                        .foregroundStyle(video.backVideo != nil ? .blue : .white)
+                                    Text("좌")
+                                        .foregroundStyle(video.leftVideo != nil ? .blue : .white)
+                                    Text("우")
+                                        .foregroundStyle(video.rightVideo != nil ? .blue : .white)
                                 })
-                            }
-                        } else {
-                            HStack {
-                                VStack(alignment: .leading, content: {
-                                    Text(video.convertDateFormat(video.date))
-                                    HStack(alignment: .bottom, content: {
-                                        Spacer()
-                                        Text("전")
-                                            .foregroundStyle(video.frontVideo != nil ? .blue : .white)
-                                        Text("후")
-                                            .foregroundStyle(video.backVideo != nil ? .blue : .white)
-                                        Text("좌")
-                                            .foregroundStyle(video.leftVideo != nil ? .blue : .white)
-                                        Text("우")
-                                            .foregroundStyle(video.rightVideo != nil ? .blue : .white)
-                                    })
+                            })
+                        }
+                    } else {
+                        HStack {
+                            VStack(alignment: .leading, content: {
+                                Text(video.convertDateFormat(video.date))
+                                HStack(alignment: .bottom, content: {
+                                    Spacer()
+                                    Text("전")
+                                        .foregroundStyle(video.frontVideo != nil ? .blue : .white)
+                                    Text("후")
+                                        .foregroundStyle(video.backVideo != nil ? .blue : .white)
+                                    Text("좌")
+                                        .foregroundStyle(video.leftVideo != nil ? .blue : .white)
+                                    Text("우")
+                                        .foregroundStyle(video.rightVideo != nil ? .blue : .white)
                                 })
-                            }
+                            })
                         }
                     }
-                    .onDelete(perform: { indexSet in
-                        deleteItems(offsets: indexSet)
-                    })
                 }
+                .animation(.smooth, value: videos)
+                .animation(.snappy, value: isEditing)
                 VStack {
                     if isProcessing {
                         ProgressView("비디오 불러오는 중...", value: progress, total: 1.0)
@@ -77,13 +81,36 @@ struct VideoListView: View {
                     }
                 }
             }
+            
             .toolbar {
-                Button(action: {
-                    isFileImporterPresented = true
-                }, label: {
-                    Image(systemName: "plus")
-                })
+                ToolbarItem(placement: .topBarLeading) {
+                    HStack{
+                        Button(isEditing ? "Done" : "Edit") {
+                            isEditing.toggle()
+                        }
+                        Button(action: {
+                            deleteSelectedVideos()
+                        }, label: {
+                            Image(systemName: "trash")
+                                .tint(Color.red)
+                                .opacity(isEditing ? 1 : 0)
+                        })
+                        .disabled(multiSelection.isEmpty)
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isFileImporterPresented = true
+                    }, label: {
+                        Image(systemName: "plus")
+                    })
+                }
             }
+            .environment(\.editMode, .constant(isEditing ? .active : .inactive))
+            .onChange(of: editMode?.wrappedValue, { oldValue, newValue in
+                isEditing = (newValue == .active)
+            })
             .fileImporter(isPresented: $isFileImporterPresented, allowedContentTypes: [.movie], allowsMultipleSelection: true) { result in
                 switch result {
                 case .success(let urls):
@@ -106,7 +133,7 @@ struct VideoListView: View {
                                 progress = Float(processedFiles) / Float(totalFiles)
                             }
                         }
-
+                        
                         DispatchQueue.main.async {
                             isProcessing = false
                         }
@@ -127,7 +154,6 @@ struct VideoListView: View {
         .onAppear(perform: {
             requestNotificationPermission()
         })
-        
     }
     
     private func requestNotificationPermission() {
@@ -136,11 +162,11 @@ struct VideoListView: View {
         }
     }
     
-    private func deleteItems(offsets: IndexSet) {
+    private func deleteSelectedVideos() {
+        
         let fileManager = FileManager.default
         
-        for index in offsets {
-            let video = videos[index]
+        for video in multiSelection {
             func deleteFile(at url: URL?) {
                 guard let url = url else { return }
                 do {
@@ -155,8 +181,10 @@ struct VideoListView: View {
             deleteFile(at: video.leftVideo)
             deleteFile(at: video.rightVideo)
             
-            modelContext.delete(videos[index])
+            modelContext.delete(video)
         }
+        multiSelection.removeAll()
+        
     }
     
     private func videoSaveToList(from url: URL) async {

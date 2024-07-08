@@ -11,6 +11,7 @@
 		CE0897DA2BBA417D000FE97B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE0897D92BBA417D000FE97B /* Assets.xcassets */; };
 		CE0897DD2BBA417D000FE97B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE0897DC2BBA417D000FE97B /* Preview Assets.xcassets */; };
 		CE1FB5B82BFDC542000D8C1F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1FB5B72BFDC542000D8C1F /* ContentView.swift */; };
+		CE5B7E412C3BD3790021DD38 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B7E402C3BD3790021DD38 /* SwiftUIView.swift */; };
 		CE7894C62C3293B500069853 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C52C3293B500069853 /* VideoView.swift */; };
 		CE7894C82C3299F300069853 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C72C3299F300069853 /* VideoPlayer.swift */; };
 		CE7894CA2C329C3900069853 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C92C329C3900069853 /* ButtonView.swift */; };
@@ -29,6 +30,7 @@
 		CE0897DC2BBA417D000FE97B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CE1FB5B72BFDC542000D8C1F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CE1FB5B92BFED3E4000D8C1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CE5B7E402C3BD3790021DD38 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		CE7894C52C3293B500069853 /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		CE7894C72C3299F300069853 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		CE7894C92C329C3900069853 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				CEDACE222C32409E00F5E742 /* MainView.swift */,
 				CE7894C52C3293B500069853 /* VideoView.swift */,
 				CE7894C92C329C3900069853 /* ButtonView.swift */,
+				CE5B7E402C3BD3790021DD38 /* SwiftUIView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -202,6 +205,7 @@
 			files = (
 				CE8A34322C006D560027062E /* CustomButton.swift in Sources */,
 				CEDACE232C32409E00F5E742 /* MainView.swift in Sources */,
+				CE5B7E412C3BD3790021DD38 /* SwiftUIView.swift in Sources */,
 				CEF057A62C32386B004EA4A1 /* Video.swift in Sources */,
 				CEF057A92C3239BA004EA4A1 /* VideoListView.swift in Sources */,
 				CEF0579B2C229BEE004EA4A1 /* ToggleStyle.swift in Sources */,

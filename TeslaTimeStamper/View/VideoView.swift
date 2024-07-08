@@ -17,6 +17,7 @@ struct VideoView: View {
     
     @ObservedObject var playerViewModel: VideoPlay = VideoPlay()
     @ObservedObject var exportViewModel: VideoExporter = VideoExporter()
+    
     @State private var animation = false
 
     var body: some View {

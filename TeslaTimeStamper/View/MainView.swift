@@ -10,9 +10,10 @@ import SwiftData
 
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.editMode) private var editMode
+    
     var body: some View {
         VideoListView()
-            
     }
 }
 
