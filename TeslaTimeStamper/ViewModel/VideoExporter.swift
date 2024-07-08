@@ -26,7 +26,7 @@ class VideoExporter: ObservableObject {
         
         //날짜 처리
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        dateFormatter.locale = Locale.current
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
         let video = AVURLAsset(url: url)
@@ -159,7 +159,7 @@ class VideoExporter: ObservableObject {
         
         //날짜 처리
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        dateFormatter.locale = Locale.current
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
         return nil

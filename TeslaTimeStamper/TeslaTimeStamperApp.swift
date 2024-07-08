@@ -13,8 +13,9 @@ struct TeslaTimeStamperApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
                 .environment(\.colorScheme, .dark)
         }
+        .modelContainer(for: Video.self)
     }
 }
