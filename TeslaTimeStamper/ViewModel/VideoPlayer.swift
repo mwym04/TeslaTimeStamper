@@ -27,8 +27,18 @@ class VideoPlay: ObservableObject {
         }
     }
     
-    func updatePlayer(with url: URL?) {
-        if let url = url {
+    func updatePlayer(with fileName: String?) {
+        
+        let fileManager = FileManager.default
+        guard let libraryDirectory = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first else {
+            print("라이브러리 디렉토리를 찾을 수 없습니다.")
+            return
+        }
+        
+        let videosDirectory = libraryDirectory.appendingPathComponent("Videos")
+        
+        if let fileName = fileName {
+            let url = videosDirectory.appendingPathComponent(fileName)
             if player == nil {
                 player = AVPlayer(url: url)
             } else {
@@ -40,6 +50,7 @@ class VideoPlay: ObservableObject {
             player = nil
             activeVideoURL = nil
         }
+        
     }
     
 }

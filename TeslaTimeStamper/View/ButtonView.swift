@@ -22,9 +22,9 @@ struct ButtonView: View {
     let impact = UIImpactFeedbackGenerator(style: .medium)
     
     var body: some View {
-        HStack{
+        HStack {
             Button(action: {
-                playerViewModel.changeActiveVideo(from: video.frontVideo)
+                playerViewModel.changeActiveVideo(from: video.getURL(from: video.frontVideo))
                 updateButtonStates(active: "front")
                 impact.impactOccurred()
                 if exportViewModel.isCompleted {
@@ -35,7 +35,7 @@ struct ButtonView: View {
                     .customButtonStyle(isActive: isFrontActive)
             })
             Button(action: {
-                playerViewModel.changeActiveVideo(from: video.backVideo)
+                playerViewModel.changeActiveVideo(from: video.getURL(from: video.backVideo))
                 updateButtonStates(active: "back")
                 impact.impactOccurred()
                 if exportViewModel.isCompleted {
@@ -47,7 +47,7 @@ struct ButtonView: View {
                 
             })
             Button(action: {
-                playerViewModel.changeActiveVideo(from: video.leftVideo)
+                playerViewModel.changeActiveVideo(from: video.getURL(from: video.leftVideo))
                 updateButtonStates(active: "left")
                 impact.impactOccurred()
                 if exportViewModel.isCompleted {
@@ -58,7 +58,7 @@ struct ButtonView: View {
                     .customButtonStyle(isActive: isLeftActive)
             })
             Button(action: {
-                playerViewModel.changeActiveVideo(from: video.rightVideo)
+                playerViewModel.changeActiveVideo(from: video.getURL(from: video.rightVideo))
                 updateButtonStates(active: "right")
                 impact.impactOccurred()
                 if exportViewModel.isCompleted {
@@ -124,10 +124,10 @@ extension View {
         
         // 새로운 Video 인스턴스 하나 추가
         let newVideo = Video(date: "2024-07-01_20-49-42")
-        newVideo.frontVideo = URL(string: "file:///path/to/front.mp4")
-        newVideo.backVideo = URL(string: "file:///path/to/back.mp4")
-        newVideo.leftVideo = URL(string: "file:///path/to/left.mp4")
-        newVideo.rightVideo = URL(string: "file:///path/to/right.mp4")
+        newVideo.frontVideo =  "file:///path/to/front.mp4"
+        newVideo.backVideo = "file:///path/to/back.mp4"
+        newVideo.leftVideo = "file:///path/to/left.mp4"
+        newVideo.rightVideo =  "file:///path/to/right.mp4"
         container.mainContext.insert(newVideo)
         
         return ButtonView(playerViewModel: VideoPlay(), exportViewModel: VideoExporter(), video: newVideo)

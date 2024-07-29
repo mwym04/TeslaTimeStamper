@@ -15,7 +15,7 @@ struct VideoListView: View {
     
     @Query(sort: \Video.date, order: .forward) private var videos: [Video]
     @State private var multiSelection = Set<Video>()
-    
+    @State private var selectionVideo: Video?
     @State var isFileImporterPresented = false
     @State private var showAlert = false
     @State private var isProcessing = false
@@ -25,52 +25,27 @@ struct VideoListView: View {
     @State private var isEditing = false
     
     var body: some View {
-        NavigationStack{
+        NavigationSplitView(columnVisibility: .constant(.all)) {
             VStack {
                 List(videos, id: \.self, selection: $multiSelection) { video in
-                    if !isProcessing {
-                        NavigationLink {
-                            VideoView(video: video)
-                                .onDisappear {
-                                    multiSelection.remove(video)
-                                }
-                        } label: {
-                            VStack(alignment: .leading, content: {
-                                Text(video.convertDateFormat(video.date))
-                                HStack(alignment: .bottom, content: {
-                                    Spacer()
-                                    Text("전")
-                                        .foregroundStyle(video.frontVideo != nil ? .blue : .white)
-                                    Text("후")
-                                        .foregroundStyle(video.backVideo != nil ? .blue : .white)
-                                    Text("좌")
-                                        .foregroundStyle(video.leftVideo != nil ? .blue : .white)
-                                    Text("우")
-                                        .foregroundStyle(video.rightVideo != nil ? .blue : .white)
-                                })
-                            })
-                        }
-                    } else {
+                    VStack(alignment: .leading, content: {
                         HStack {
-                            VStack(alignment: .leading, content: {
-                                Text(video.convertDateFormat(video.date))
-                                HStack(alignment: .bottom, content: {
-                                    Spacer()
-                                    Text("전")
-                                        .foregroundStyle(video.frontVideo != nil ? .blue : .white)
-                                    Text("후")
-                                        .foregroundStyle(video.backVideo != nil ? .blue : .white)
-                                    Text("좌")
-                                        .foregroundStyle(video.leftVideo != nil ? .blue : .white)
-                                    Text("우")
-                                        .foregroundStyle(video.rightVideo != nil ? .blue : .white)
-                                })
-                            })
-                        }
-                    }
+                            Text(video.convertDateFormat(video.date))
+                        }.transition(.slide)
+                        HStack(alignment: .bottom, content: {
+                            Spacer()
+                            Text("전")
+                                .foregroundStyle(video.frontVideo != nil ? .blue : .white)
+                            Text("후")
+                                .foregroundStyle(video.backVideo != nil ? .blue : .white)
+                            Text("좌")
+                                .foregroundStyle(video.leftVideo != nil ? .blue : .white)
+                            Text("우")
+                                .foregroundStyle(video.rightVideo != nil ? .blue : .white)
+                        })
+                    })
                 }
                 .animation(.smooth, value: videos)
-                .animation(.snappy, value: isEditing)
                 VStack {
                     if isProcessing {
                         ProgressView("비디오 불러오는 중...", value: progress, total: 1.0)
@@ -81,15 +56,18 @@ struct VideoListView: View {
                     }
                 }
             }
-            
+            .toolbar(removing: .sidebarToggle)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     HStack{
-                        Button(isEditing ? "Done" : "Edit") {
-                            isEditing.toggle()
+                        Button(isEditing ? "완료" : "선택") {
+                            withAnimation(.easeInOut) {
+                                isEditing.toggle()
+                            }
                         }
                         Button(action: {
                             deleteSelectedVideos()
+                            isEditing.toggle()
                         }, label: {
                             Image(systemName: "trash")
                                 .tint(Color.red)
@@ -150,6 +128,16 @@ struct VideoListView: View {
             })
             .navigationTitle("블랙박스 영상")
             .navigationBarTitleDisplayMode(.automatic)
+            
+        } detail: {
+            if let video = multiSelection.first {
+                VideoView(video: video)
+                    .onDisappear {
+                        multiSelection.remove(video)
+                    }
+            } else {
+                Text("비디오를 선택하세요.")
+            }
         }
         .onAppear(perform: {
             requestNotificationPermission()
@@ -176,10 +164,10 @@ struct VideoListView: View {
                     print("파일 삭제 실패: \(url.lastPathComponent), 에러: \(error.localizedDescription)")
                 }
             }
-            deleteFile(at: video.frontVideo)
-            deleteFile(at: video.backVideo)
-            deleteFile(at: video.leftVideo)
-            deleteFile(at: video.rightVideo)
+            deleteFile(at: video.getURL(from: video.frontVideo))
+            deleteFile(at: video.getURL(from: video.backVideo))
+            deleteFile(at: video.getURL(from: video.leftVideo))
+            deleteFile(at: video.getURL(from: video.rightVideo))
             
             modelContext.delete(video)
         }
@@ -224,13 +212,13 @@ struct VideoListView: View {
             if let video = videos.first {
                 switch position {
                 case "front":
-                    video.frontVideo = extractURL(from: url)
+                    video.frontVideo = url.lastPathComponent
                 case "back":
-                    video.backVideo = extractURL(from: url)
+                    video.backVideo = url.lastPathComponent
                 case "left_repeater":
-                    video.leftVideo = extractURL(from: url)
+                    video.leftVideo = url.lastPathComponent
                 case "right_repeater":
-                    video.rightVideo = extractURL(from: url)
+                    video.rightVideo = url.lastPathComponent
                 default:
                     break
                 }
@@ -238,13 +226,13 @@ struct VideoListView: View {
                 let newVideo = Video(date: date)
                 switch position {
                 case "front":
-                    newVideo.frontVideo = extractURL(from: url)
+                    newVideo.frontVideo = url.lastPathComponent
                 case "back":
-                    newVideo.backVideo = extractURL(from: url)
+                    newVideo.backVideo = url.lastPathComponent
                 case "left_repeater":
-                    newVideo.leftVideo = extractURL(from: url)
+                    newVideo.leftVideo = url.lastPathComponent
                 case "right_repeater":
-                    newVideo.rightVideo = extractURL(from: url)
+                    newVideo.rightVideo = url.lastPathComponent
                 default:
                     break
                 }
@@ -307,18 +295,10 @@ struct VideoListView: View {
         }
     }
     
-    private func extractURL(from sourceURL: URL) -> URL? {
-        let fileManager = FileManager.default
-        guard let libraryDirectory = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first else {
-            print("문서 디렉토리를 찾을 수 없습니다.")
-            return nil
-        }
+    private func extractURL(from sourceURL: URL) -> String? {
         
-        let videosDirectory = libraryDirectory.appendingPathComponent("Videos")
-        
-        let destinationURL = videosDirectory.appendingPathComponent(sourceURL.lastPathComponent)
-        
-        return destinationURL
+        return sourceURL.lastPathComponent
+
     }
 }
 
@@ -332,10 +312,10 @@ struct VideoListView: View {
         
         // 새로운 Video 인스턴스 하나 추가
         let newVideo = Video(date: "2024-07-01_20-49-42")
-        newVideo.frontVideo = URL(string: "file:///path/to/front.mp4")
-        newVideo.backVideo = URL(string: "file:///path/to/back.mp4")
-        newVideo.leftVideo = URL(string: "file:///path/to/left.mp4")
-        newVideo.rightVideo = URL(string: "file:///path/to/right.mp4")
+        newVideo.frontVideo = "file:///path/to/front.mp4"
+        newVideo.backVideo = "file:///path/to/back.mp4"
+        newVideo.leftVideo = "file:///path/to/left.mp4"
+        newVideo.rightVideo = "file:///path/to/right.mp4"
         container.mainContext.insert(newVideo)
         
         return VideoListView()
