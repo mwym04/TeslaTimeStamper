@@ -13,7 +13,7 @@ struct MainView: View {
     @Environment(\.editMode) private var editMode
     
     var body: some View {
-        VideoListView()
+        VideoListView(modelContext: modelContext)
     }
 }
 
