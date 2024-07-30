@@ -13,6 +13,8 @@ struct VideoListView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.editMode) private var editMode
     
+    @ObservedObject var playerViewModel: VideoPlay = VideoPlay()
+    
     @Query(sort: \Video.date, order: .forward) private var videos: [Video]
     @State private var multiSelection = Set<Video>()
     @State private var selectionVideo: Video?
@@ -56,6 +58,9 @@ struct VideoListView: View {
                     }
                 }
             }
+            .onChange(of: multiSelection, { oldValue, newValue in
+                
+            })
             .toolbar(removing: .sidebarToggle)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -131,7 +136,7 @@ struct VideoListView: View {
             
         } detail: {
             if let video = multiSelection.first {
-                VideoView(video: video)
+                VideoView(video: video, playerViewModel: playerViewModel)
                     .onDisappear {
                         multiSelection.remove(video)
                     }
@@ -149,6 +154,18 @@ struct VideoListView: View {
             
         }
     }
+    
+//    private func setupPlayer() {
+//        if let video = multiSelection.first {
+//            let videoURL = [
+//                video.frontVideo,
+//                video.backVideo,
+//                video.leftVideo,
+//                video.rightVideo
+//            ].compactMap({ $0 }).first
+//            playerViewModel.updatePlayer(with: videoURL)
+//        }
+//    }
     
     private func deleteSelectedVideos() {
         
@@ -191,6 +208,7 @@ struct VideoListView: View {
         }
         
         let date: String = String(fileName.prefix(fileName.count - position.count - 1))
+        print(date)
         
         let descriptor = FetchDescriptor<Video>(predicate: #Predicate { video in
             video.date == date
@@ -206,7 +224,6 @@ struct VideoListView: View {
         }
         
         await moveFile(from: url)
-        print(extractURL(from: url)!)
         
         DispatchQueue.main.async {
             if let video = videos.first {

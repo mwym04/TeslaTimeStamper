@@ -15,7 +15,7 @@ struct VideoView: View {
     
     var video: Video
     
-    @ObservedObject var playerViewModel: VideoPlay = VideoPlay()
+    @ObservedObject var playerViewModel: VideoPlay
     @ObservedObject var exportViewModel: VideoExporter = VideoExporter()
     
     @State private var animation = false
@@ -26,9 +26,9 @@ struct VideoView: View {
             ButtonView(playerViewModel: playerViewModel, exportViewModel: exportViewModel, video: video)
                 .padding()
                 .padding(.top, 50)
-                .onAppear {
-                    setupPlayer()
-                }
+//                .onAppear {
+//                    setupPlayer()
+//                }
             GeometryReader { geometry in
                 ZStack {
                     if let player = playerViewModel.player {
@@ -76,9 +76,6 @@ struct VideoView: View {
                         }
                     }
                 }
-            }
-            .onChange(of: video) { oldValue, newValue in
-                setupPlayer()
             }
             
             Button {
@@ -223,7 +220,7 @@ struct PinchableVideoPlayer: UIViewRepresentable {
         newVideo.rightVideo = "file:///path/to/right.mp4"
         container.mainContext.insert(newVideo)
         
-        return VideoView(video: newVideo)
+        return VideoView(video: newVideo, playerViewModel: VideoPlay())
             .modelContainer(container)
     } catch {
         fatalError("Failed to create model container: \(error.localizedDescription)")
