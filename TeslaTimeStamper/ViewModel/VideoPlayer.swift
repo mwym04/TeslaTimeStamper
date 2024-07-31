@@ -18,16 +18,33 @@ class VideoPlay: ObservableObject {
     }
     
     func changeActiveVideo(from sourceURL: URL?) {
-        if let url = sourceURL {
-            activeVideoURL = url
-            player = AVPlayer(url: url)
-        } else {
+        // 기존 player를 정리합니다.
+        player?.replaceCurrentItem(with: nil)
+        
+        guard let url = sourceURL else {
             activeVideoURL = nil
             player = nil
+            return
         }
+        
+        // AVPlayerItem을 사용하여 메모리 사용을 최적화합니다.
+        let playerItem = AVPlayerItem(url: url)
+        
+        if player == nil {
+            player = AVPlayer(playerItem: playerItem)
+        } else {
+            player?.replaceCurrentItem(with: playerItem)
+        }
+        
+        activeVideoURL = url
     }
     
     func updatePlayer(with fileName: String?) {
+        guard let fileName = fileName else {
+            player = nil
+            activeVideoURL = nil
+            return
+        }
         
         let fileManager = FileManager.default
         guard let libraryDirectory = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first else {
@@ -35,22 +52,20 @@ class VideoPlay: ObservableObject {
             return
         }
         
-        let videosDirectory = libraryDirectory.appendingPathComponent("Videos")
+        let videoURL = libraryDirectory.appendingPathComponent("Videos").appendingPathComponent(fileName)
         
-        if let fileName = fileName {
-            let url = videosDirectory.appendingPathComponent(fileName)
-            if player == nil {
-                player = AVPlayer(url: url)
-            } else {
-                let item = AVPlayerItem(url: url)
-                player?.replaceCurrentItem(with: item)
-            }
-            activeVideoURL = url
+        // 기존 player를 정리합니다.
+        player?.replaceCurrentItem(with: nil)
+        
+        // AVPlayerItem을 사용하여 메모리 사용을 최적화합니다.
+        let playerItem = AVPlayerItem(url: videoURL)
+        
+        if player == nil {
+            player = AVPlayer(playerItem: playerItem)
         } else {
-            player = nil
-            activeVideoURL = nil
+            player?.replaceCurrentItem(with: playerItem)
         }
         
+        activeVideoURL = videoURL
     }
-    
 }

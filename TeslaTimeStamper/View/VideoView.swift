@@ -26,9 +26,6 @@ struct VideoView: View {
             ButtonView(playerViewModel: playerViewModel, exportViewModel: exportViewModel, video: video)
                 .padding()
                 .padding(.top, 50)
-//                .onAppear {
-//                    setupPlayer()
-//                }
             GeometryReader { geometry in
                 ZStack {
                     if let player = playerViewModel.player {
@@ -77,9 +74,7 @@ struct VideoView: View {
                     }
                 }
             }
-            
             Button {
-                
                 if isIntergrated {
                     if let videoURL = playerViewModel.activeVideoURL, let creationDate = convertStringToDate(video.date) {
                         Task {
@@ -92,9 +87,7 @@ struct VideoView: View {
                     }
                     
                 } else {
-                    
                     if let videoURL = playerViewModel.activeVideoURL, let creationDate = convertStringToDate(video.date) {
-                        
                         Task {
                             let taskId = UIApplication.shared.beginBackgroundTask()
                             if let exportURL = try await exportViewModel.export(url: videoURL, creationDate: creationDate) {
@@ -122,6 +115,10 @@ struct VideoView: View {
                         Toggle("통합 비디오", isOn: $isIntergrated)
                             .toggleStyle(.switch)
                     }
+                } else {
+                    Toggle("통합 비디오", isOn: $isIntergrated)
+                        .toggleStyle(.switch)
+                        .disabled(true)
                 }
                 
                 if exportViewModel.isExporting {
@@ -139,16 +136,6 @@ struct VideoView: View {
         dateFormatter.locale = Locale.current
         
         return dateFormatter.date(from: dateString)
-    }
-    
-    private func setupPlayer() {
-        let videoURL = [
-            video.frontVideo,
-            video.backVideo,
-            video.leftVideo,
-            video.rightVideo
-        ].compactMap({ $0 }).first
-        playerViewModel.updatePlayer(with: videoURL)
     }
 }
 

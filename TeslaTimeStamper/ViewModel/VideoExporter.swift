@@ -89,7 +89,6 @@ class VideoExporter: ObservableObject {
             fatalError()
         }
         
-        
         exportSession.outputFileType = outputFileType
         exportSession.outputURL = outURL
         exportSession.videoComposition = titleComposition

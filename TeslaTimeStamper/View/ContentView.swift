@@ -11,6 +11,7 @@ import AVKit
 import UserNotifications
 
 struct ContentView: View {
+    
     @State private var isFileImporterPresented = false
     @State private var isSheetPresented = false
     @State private var selectedVideoURL: URL?
@@ -188,7 +189,6 @@ struct ContentView: View {
             }
         }
     }
-    
     
     private func loadCreationDate(from url: URL) async {
         let asset = AVAsset(url: url)

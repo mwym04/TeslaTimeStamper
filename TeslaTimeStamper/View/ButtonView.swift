@@ -69,6 +69,9 @@ struct ButtonView: View {
                     .customButtonStyle(isActive: isRightActive)
             })
         }
+        .onChange(of: video, { oldValue, newValue in
+            setInitialActiveButton()
+        })
         .onAppear {
             setInitialActiveButton()
         }

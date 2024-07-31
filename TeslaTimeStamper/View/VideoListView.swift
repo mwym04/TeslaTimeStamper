@@ -21,23 +21,30 @@ struct VideoListView: View {
         NavigationSplitView(columnVisibility: .constant(.all)) {
             VStack {
                 List(viewModel.videos, id: \.self, selection: $viewModel.multiSelection) { video in
-                    VStack(alignment: .leading, content: {
-                        HStack {
-                            Text(video.convertDateFormat(video.date))
-                        }.transition(.slide)
-                        HStack(alignment: .bottom, content: {
-                            Spacer()
-                            Text("전")
-                                .foregroundStyle(video.frontVideo != nil ? .blue : .white)
-                            Text("후")
-                                .foregroundStyle(video.backVideo != nil ? .blue : .white)
-                            Text("좌")
-                                .foregroundStyle(video.leftVideo != nil ? .blue : .white)
-                            Text("우")
-                                .foregroundStyle(video.rightVideo != nil ? .blue : .white)
+                    HStack {
+                        VStack(alignment: .leading, content: {
+                            HStack {
+                                Text(video.convertDateFormat(video.date))
+                            }.transition(.slide)
+                            HStack(alignment: .bottom, content: {
+                                Spacer()
+                                Text("전")
+                                    .foregroundStyle(video.frontVideo != nil ? .blue : .white)
+                                Text("후")
+                                    .foregroundStyle(video.backVideo != nil ? .blue : .white)
+                                Text("좌")
+                                    .foregroundStyle(video.leftVideo != nil ? .blue : .white)
+                                Text("우")
+                                    .foregroundStyle(video.rightVideo != nil ? .blue : .white)
+                            })
                         })
-                    })
+                        if UIDevice.current.userInterfaceIdiom == .phone {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                    }
                 }
+                .tint(Color(red: 51/255, green: 51/255, blue: 51/255))
                 .animation(.smooth, value: viewModel.videos)
                 
                 VStack {
@@ -128,13 +135,15 @@ struct VideoListView: View {
                 Text("비디오를 선택하세요.")
             }
         }
-        .onChange(of: viewModel.videos) { _, _ in
-            // videos 배열이 변경될 때마다 뷰 갱신
-            print("Videos updated")
-        }
-        .onAppear(perform: {
-            requestNotificationPermission()
+        
+        .onChange(of: viewModel.multiSelection.first, { oldValue, newValue in
+            if let video = newValue {
+                let videoURL = [video.frontVideo, video.backVideo, video.leftVideo, video.rightVideo].compactMap({ $0 }).first
+                playerViewModel.updatePlayer(with: videoURL)
+            }
         })
+        
+        .onAppear(perform: { requestNotificationPermission() })
     }
     
     private func requestNotificationPermission() {
@@ -142,3 +151,11 @@ struct VideoListView: View {
     }
 }
 
+#Preview {
+    // SwiftData의 ModelContainer를 생성합니다.
+    let container = try! ModelContainer(for: Video.self)
+    
+    // VideoListView를 반환합니다.
+    return VideoListView(modelContext: container.mainContext)
+        .modelContainer(container)
+}
