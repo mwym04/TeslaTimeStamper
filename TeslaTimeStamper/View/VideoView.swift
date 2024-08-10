@@ -16,10 +16,12 @@ struct VideoView: View {
     var video: Video
     
     @ObservedObject var playerViewModel: VideoPlay
-    @ObservedObject var exportViewModel: VideoExporter = VideoExporter()
+    @ObservedObject var exportViewModel: VideoExporter
+    
     
     @State private var animation = false
     @State private var isIntergrated = false
+    @State private var showingAlert = false
 
     var body: some View {
         VStack {
@@ -63,14 +65,15 @@ struct VideoView: View {
                     }
                     if exportViewModel.isExporting {
                         VStack {
-                            ProgressView(value: exportViewModel.progress, total: 1.0)
-                                .progressViewStyle(LinearProgressViewStyle())
-                                .tint(Color.white)
-                                .animation(.linear(duration: 0.1), value: exportViewModel.progress)
+                            CircularProgressView(progress: CGFloat(exportViewModel.progress))
                                 .padding()
                             Text("\(Int(exportViewModel.progress * 100))%")
                                 .monospacedDigit()
                         }
+                        .padding()
+                        .frame(width: 200, height: 200)
+                        .background(Color(red: 30/255, green: 30/255, blue: 30/255))
+                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
                     }
                 }
             }
@@ -85,7 +88,6 @@ struct VideoView: View {
                             UIApplication.shared.endBackgroundTask(taskId)
                         }
                     }
-                    
                 } else {
                     if let videoURL = playerViewModel.activeVideoURL, let creationDate = convertStringToDate(video.date) {
                         Task {
@@ -187,6 +189,28 @@ struct PinchableVideoPlayer: UIViewRepresentable {
     }
 }
 
+struct CircularProgressView: View {
+  let progress: CGFloat
+
+  var body: some View {
+    ZStack {
+      // Background for the progress bar
+      Circle()
+        .stroke(lineWidth: 10)
+        .opacity(0.1)
+        .foregroundColor(.white)
+
+      // Foreground or the actual progress bar
+      Circle()
+        .trim(from: 0.0, to: min(progress, 1.0))
+        .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
+        .foregroundColor(.white)
+        .rotationEffect(Angle(degrees: 270.0))
+        .animation(.linear, value: progress)
+    }
+  }
+}
+
 
 
 
@@ -207,7 +231,7 @@ struct PinchableVideoPlayer: UIViewRepresentable {
         newVideo.rightVideo = "file:///path/to/right.mp4"
         container.mainContext.insert(newVideo)
         
-        return VideoView(video: newVideo, playerViewModel: VideoPlay())
+        return VideoView(video: Video(date: "2024-07-06"), playerViewModel: VideoPlay(), exportViewModel: VideoExporter())
             .modelContainer(container)
     } catch {
         fatalError("Failed to create model container: \(error.localizedDescription)")

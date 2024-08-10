@@ -12,6 +12,7 @@ struct VideoListView: View {
     
     @StateObject private var viewModel: VideoListViewModel
     @ObservedObject var playerViewModel: VideoPlay = VideoPlay()
+    @ObservedObject var exportViewModel: VideoExporter = VideoExporter()
     
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: VideoListViewModel(modelContext: modelContext))
@@ -44,6 +45,7 @@ struct VideoListView: View {
                         }
                     }
                 }
+                .disabled(exportViewModel.isExporting)
                 .tint(Color(red: 51/255, green: 51/255, blue: 51/255))
                 .animation(.smooth, value: viewModel.videos)
                 
@@ -127,8 +129,8 @@ struct VideoListView: View {
             .navigationBarTitleDisplayMode(.automatic)
         } detail: {
             if let video = viewModel.multiSelection.first {
-                VideoView(video: video, playerViewModel: playerViewModel)
-                    .onDisappear {
+                VideoView(video: video, playerViewModel: playerViewModel, exportViewModel: exportViewModel)
+                .onDisappear {
                         viewModel.multiSelection.remove(video)
                     }
             } else {
@@ -151,11 +153,3 @@ struct VideoListView: View {
     }
 }
 
-#Preview {
-    // SwiftData의 ModelContainer를 생성합니다.
-    let container = try! ModelContainer(for: Video.self)
-    
-    // VideoListView를 반환합니다.
-    return VideoListView(modelContext: container.mainContext)
-        .modelContainer(container)
-}

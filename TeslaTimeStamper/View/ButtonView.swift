@@ -69,6 +69,7 @@ struct ButtonView: View {
                     .customButtonStyle(isActive: isRightActive)
             })
         }
+        .disabled(exportViewModel.isExporting)
         .onChange(of: video, { oldValue, newValue in
             setInitialActiveButton()
         })

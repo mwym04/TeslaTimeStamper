@@ -13,7 +13,7 @@
 		CE1FB5B82BFDC542000D8C1F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1FB5B72BFDC542000D8C1F /* ContentView.swift */; };
 		CE5B7E412C3BD3790021DD38 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B7E402C3BD3790021DD38 /* SwiftUIView.swift */; };
 		CE7894C62C3293B500069853 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C52C3293B500069853 /* VideoView.swift */; };
-		CE7894C82C3299F300069853 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C72C3299F300069853 /* VideoPlayer.swift */; };
+		CE7894C82C3299F300069853 /* VideoPlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C72C3299F300069853 /* VideoPlay.swift */; };
 		CE7894CA2C329C3900069853 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7894C92C329C3900069853 /* ButtonView.swift */; };
 		CE7CAB382C58AA1900D508AC /* VideoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7CAB372C58AA1900D508AC /* VideoListViewModel.swift */; };
 		CE8A34302C006C270027062E /* VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8A342F2C006C270027062E /* VideoExporter.swift */; };
@@ -33,7 +33,7 @@
 		CE1FB5B92BFED3E4000D8C1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CE5B7E402C3BD3790021DD38 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		CE7894C52C3293B500069853 /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
-		CE7894C72C3299F300069853 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		CE7894C72C3299F300069853 /* VideoPlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlay.swift; sourceTree = "<group>"; };
 		CE7894C92C329C3900069853 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
 		CE7CAB372C58AA1900D508AC /* VideoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListViewModel.swift; sourceTree = "<group>"; };
 		CE8A342F2C006C270027062E /* VideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporter.swift; sourceTree = "<group>"; };
@@ -110,7 +110,7 @@
 			children = (
 				CE7CAB372C58AA1900D508AC /* VideoListViewModel.swift */,
 				CE8A342F2C006C270027062E /* VideoExporter.swift */,
-				CE7894C72C3299F300069853 /* VideoPlayer.swift */,
+				CE7894C72C3299F300069853 /* VideoPlay.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -215,7 +215,7 @@
 				CE7894CA2C329C3900069853 /* ButtonView.swift in Sources */,
 				CE7CAB382C58AA1900D508AC /* VideoListViewModel.swift in Sources */,
 				CE1FB5B82BFDC542000D8C1F /* ContentView.swift in Sources */,
-				CE7894C82C3299F300069853 /* VideoPlayer.swift in Sources */,
+				CE7894C82C3299F300069853 /* VideoPlay.swift in Sources */,
 				CE7894C62C3293B500069853 /* VideoView.swift in Sources */,
 				CE8A34302C006C270027062E /* VideoExporter.swift in Sources */,
 				CE0897D62BBA417C000FE97B /* TeslaTimeStamperApp.swift in Sources */,
@@ -353,7 +353,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TeslaTimeStamper/TeslaTimeStamper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"TeslaTimeStamper/Preview Content\"";
 				DEVELOPMENT_TEAM = 2L99SBH8W7;
 				ENABLE_PREVIEWS = YES;
@@ -374,7 +374,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = MW.TeslaTime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -394,7 +394,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TeslaTimeStamper/TeslaTimeStamper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"TeslaTimeStamper/Preview Content\"";
 				DEVELOPMENT_TEAM = 2L99SBH8W7;
 				ENABLE_PREVIEWS = YES;
@@ -415,7 +415,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = MW.TeslaTime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
