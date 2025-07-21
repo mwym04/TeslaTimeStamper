@@ -64,3 +64,8 @@ final class Video {
         return nil
     }
 }
+
+extension Video: Hashable {
+    static func == (lhs: Video, rhs: Video) -> Bool { lhs.date == rhs.date }
+    func hash(into hasher: inout Hasher) { hasher.combine(date) }
+}

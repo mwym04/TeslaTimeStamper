@@ -10,7 +10,7 @@ import SwiftData
 
 class VideoListViewModel: ObservableObject {
     @Published var videos: [Video] = []
-    @Published var multiSelection = Set<Video>()
+    @Published var multiSelection = Set<String>()
     @Published var isFileImporterPresented = false
     @Published var showAlert = false
     @Published var isProcessing = false
@@ -29,7 +29,10 @@ class VideoListViewModel: ObservableObject {
     func fetchVideos() {
         let descriptor = FetchDescriptor<Video>(sortBy: [SortDescriptor(\.date)])
         do {
-            videos = try modelContext.fetch(descriptor)
+            let fetched = try modelContext.fetch(descriptor)
+            DispatchQueue.main.async {
+                self.videos = fetched
+            }
         } catch {
             print("Failed to fetch videos: \(error)")
         }
@@ -38,7 +41,8 @@ class VideoListViewModel: ObservableObject {
     func deleteSelectedVideos() {
         let fileManager = FileManager.default
         
-        for video in multiSelection {
+        for date in multiSelection {
+            guard let video = videos.first(where: { $0.date == date}) else { continue }
             func deleteFile(at url: URL?) {
                 guard let url = url else { return }
                 do {
@@ -57,6 +61,10 @@ class VideoListViewModel: ObservableObject {
         }
         multiSelection.removeAll()
         fetchVideos()
+        DispatchQueue.main.async {
+            self.multiSelection.removeAll()
+            self.fetchVideos()
+        }
     }
     
     func videoSaveToList(from url: URL) async {
@@ -66,11 +74,17 @@ class VideoListViewModel: ObservableObject {
         
         if fileName == position {
             showAlert = true
+            await MainActor.run {
+                self.showAlert = true
+            }
             return
         }
         
         if !["front", "back", "left_repeater", "right_repeater"].contains(position) {
             showAlert = true
+            await MainActor.run {
+                self.showAlert = true
+            }
             return
         }
         
@@ -92,7 +106,7 @@ class VideoListViewModel: ObservableObject {
         
         await moveFile(from: url)
         
-        DispatchQueue.main.async {
+        await MainActor.run {
             if let video = videos.first {
                 switch position {
                 case "front":
@@ -123,13 +137,13 @@ class VideoListViewModel: ObservableObject {
                 self.modelContext.insert(newVideo)
             }
             self.fetchVideos()
-        }
-        
-        do {
-            try modelContext.save()
-            print("Updated successfully")
-        } catch {
-            print("Failed to save changes: \(error)")
+            
+            do {
+                try modelContext.save()
+                print("Updated successfully")
+            } catch {
+                print("Failed to save changes: \(error)")
+            }
         }
     }
     
