@@ -21,12 +21,12 @@ struct VideoListView: View {
     var body: some View {
         NavigationSplitView(columnVisibility: .constant(.all)) {
             VStack {
-                List(viewModel.videos, id: \.date, selection: $viewModel.multiSelection) { video in
+                List(viewModel.videos, id: \.self, selection: $viewModel.multiSelection) { video in
                     HStack {
                         VStack(alignment: .leading, content: {
                             HStack {
                                 Text(video.convertDateFormat(video.date))
-                            }
+                            }.transition(.slide)
                             HStack(alignment: .bottom, content: {
                                 Spacer()
                                 Text("전")
@@ -47,6 +47,7 @@ struct VideoListView: View {
                 }
                 .disabled(exportViewModel.isExporting)
                 .tint(Color(red: 51/255, green: 51/255, blue: 51/255))
+                .animation(.smooth, value: viewModel.videos)
                 
                 VStack {
                     if viewModel.isProcessing {
@@ -67,26 +68,21 @@ struct VideoListView: View {
                                 viewModel.isEditing.toggle()
                             }
                         }
-                        .disabled(viewModel.isProcessing)
                         Button(action: {
-                            withAnimation(.easeInOut) {
-                                viewModel.deleteSelectedVideos()
-                                viewModel.isEditing.toggle()
-                            }
+                            viewModel.deleteSelectedVideos()
+                            viewModel.isEditing.toggle()
                         }, label: {
                             Image(systemName: "trash")
                                 .tint(Color.red)
                                 .opacity(viewModel.isEditing ? 1 : 0)
                         })
-                        .disabled(viewModel.multiSelection.isEmpty || viewModel.isProcessing)
+                        .disabled(viewModel.multiSelection.isEmpty)
                     }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        withAnimation(.easeInOut) {
-                            viewModel.isFileImporterPresented = true
-                        }
+                        viewModel.isFileImporterPresented = true
                     }, label: {
                         Image(systemName: "plus")
                     })
@@ -132,23 +128,26 @@ struct VideoListView: View {
             .navigationTitle("블랙박스 영상")
             .navigationBarTitleDisplayMode(.automatic)
         } detail: {
-            if let date = viewModel.multiSelection.first, let video = viewModel.videos.first(where: { $0.date == date }) {
-                
+            if let video = viewModel.multiSelection.first {
                 VideoView(video: video, playerViewModel: playerViewModel, exportViewModel: exportViewModel)
-                    .onDisappear {
-                        viewModel.multiSelection.remove(date)
+                .onDisappear {
+                        viewModel.multiSelection.remove(video)
                     }
             } else {
                 Text("비디오를 선택하세요.")
             }
         }
         
-        .onChange(of: viewModel.multiSelection.first, { oldValue, newValue in
-            if let date = newValue, let video = viewModel.videos.first(where: { $0.date == date}) {
-                let videoURL = [video.frontVideo, video.backVideo, video.leftVideo, video.rightVideo].compactMap({ $0 }).first
+        .onChange(of: viewModel.multiSelection) { newValue in
+            if let video = newValue.first {
+                let videoURL = [video.frontVideo, video.backVideo, video.leftVideo, video.rightVideo]
+                    .compactMap { $0 }
+                    .first
                 playerViewModel.updatePlayer(with: videoURL)
+            } else {
+                playerViewModel.updatePlayer(with: nil)
             }
-        })
+        }
         
         .onAppear(perform: { requestNotificationPermission() })
     }
