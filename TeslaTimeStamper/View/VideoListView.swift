@@ -138,16 +138,12 @@ struct VideoListView: View {
             }
         }
         
-        .onChange(of: viewModel.multiSelection) { newValue in
-            if let video = newValue.first {
-                let videoURL = [video.frontVideo, video.backVideo, video.leftVideo, video.rightVideo]
-                    .compactMap { $0 }
-                    .first
+        .onChange(of: viewModel.multiSelection.first, { oldValue, newValue in
+            if let video = newValue {
+                let videoURL = [video.frontVideo, video.backVideo, video.leftVideo, video.rightVideo].compactMap({ $0 }).first
                 playerViewModel.updatePlayer(with: videoURL)
-            } else {
-                playerViewModel.updatePlayer(with: nil)
             }
-        }
+        })
         
         .onAppear(perform: { requestNotificationPermission() })
     }
